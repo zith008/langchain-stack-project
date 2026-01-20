@@ -171,7 +171,7 @@ export default function Home() {
             <Sparkles size={22} className="text-indigo-400" />
           </div>
           <div>
-            <span className="font-bold text-lg tracking-tight">TechStack</span>
+            <span className="font-bold text-lg tracking-tight">Cloudnova</span>
             <div className="text-[8px] uppercase tracking-[.25em] text-white/30">Multi-Agent Hub</div>
           </div>
         </div>
@@ -239,7 +239,7 @@ export default function Home() {
         {/* Top Navbar */}
         <header className="h-20 border-b border-white/5 flex items-center justify-between px-6 bg-white/[0.01] backdrop-blur-md sticky top-0 z-10">
           <div className="flex items-center gap-4">
-            <h1 className="text-lg font-semibold lg:hidden">TechStack</h1>
+            <h1 className="text-lg font-semibold lg:hidden">Cloudnova</h1>
             <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">Production Ready API</span>

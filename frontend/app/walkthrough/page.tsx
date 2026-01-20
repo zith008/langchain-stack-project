@@ -163,6 +163,32 @@ export default function Walkthrough() {
                     </p>
                 </motion.div>
 
+                {/* Developer Introduction */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 }}
+                    className="mb-16"
+                >
+                    <div className="p-8 bg-gradient-to-br from-indigo-600/10 via-purple-600/5 to-pink-600/10 border border-indigo-500/20 rounded-2xl backdrop-blur-xl">
+                        <div className="flex items-start gap-4 mb-4">
+                            <div className="p-3 bg-indigo-600/20 rounded-xl border border-indigo-500/30">
+                                <Sparkles size={24} className="text-indigo-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold mb-2">Fazith Ismail</h2>
+                                <p className="text-indigo-300 font-medium">AI Engineer | Full-Stack + Generative AI</p>
+                            </div>
+                        </div>
+                        <p className="text-white/80 leading-relaxed">
+                            I'm a highly motivated engineer who thrives on exploring and implementing cutting-edge generative AI technology.
+                            My passion lies in rapidly prototyping innovative solutions and bringing them to production, bridging the gap between
+                            experimental AI capabilities and real-world applications. This project showcases my ability to architect and deploy
+                            enterprise-grade AI systems using modern frameworks and best practices.
+                        </p>
+                    </div>
+                </motion.section>
+
                 {/* Overview */}
                 <motion.section
                     initial={{ opacity: 0, y: 20 }}
