@@ -2,6 +2,7 @@ import os
 import json
 import re
 import time
+import httpx
 from dataclasses import dataclass
 from typing import Optional, List, Any
 from fastapi import FastAPI
@@ -59,8 +60,47 @@ class ChatRequest(BaseModel):
 
 @tool
 def get_weather_for_location(city: str) -> str:
-    """Get weather for a given city."""
-    return f"It's always sunny in {city}!"
+    """Get real weather data for a given city using Open-Meteo API."""
+    try:
+        # Step 1: Geocode the city name to get lat/lon
+        geocode_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}&count=1"
+        geo_response = httpx.get(geocode_url, timeout=10)
+        geo_data = geo_response.json()
+        
+        if not geo_data.get("results"):
+            return f"Could not find location: {city}"
+        
+        location = geo_data["results"][0]
+        lat, lon = location["latitude"], location["longitude"]
+        city_name = location.get("name", city)
+        country = location.get("country", "")
+        
+        # Step 2: Get weather data
+        weather_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,weathercode,windspeed_10m,relative_humidity_2m"
+        weather_response = httpx.get(weather_url, timeout=10)
+        weather_data = weather_response.json()
+        
+        current = weather_data.get("current", {})
+        temp = current.get("temperature_2m", "N/A")
+        humidity = current.get("relative_humidity_2m", "N/A")
+        wind = current.get("windspeed_10m", "N/A")
+        weather_code = current.get("weathercode", 0)
+        
+        # Map weather codes to descriptions
+        weather_codes = {
+            0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+            45: "Foggy", 48: "Depositing rime fog",
+            51: "Light drizzle", 53: "Moderate drizzle", 55: "Dense drizzle",
+            61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain",
+            71: "Slight snow", 73: "Moderate snow", 75: "Heavy snow",
+            80: "Slight rain showers", 81: "Moderate showers", 82: "Violent showers",
+            95: "Thunderstorm", 96: "Thunderstorm with hail", 99: "Severe thunderstorm"
+        }
+        condition = weather_codes.get(weather_code, "Unknown")
+        
+        return f"Weather in {city_name}, {country}: {temp}°C, {condition}. Humidity: {humidity}%, Wind: {wind} km/h"
+    except Exception as e:
+        return f"Weather API error: {str(e)}"
 
 @tool
 def get_user_location(runtime: ToolRuntime[Context]) -> str:
@@ -199,7 +239,7 @@ app.add_middleware(
 async def root():
     return {
         "status": "online",
-        "endpoints": ["/chat", "/extract", "/analyze", "/resume", "/sla-document"],
+        "endpoints": ["/chat", "/extract", "/analyze", "/sladocs", "/sla-document"],
         "tech_stack": ["FastAPI", "LangChain", "AWS Bedrock (Llama 3.2 11B)", "PGVector", "PostgreSQL"]
     }
 
@@ -291,8 +331,8 @@ async def analyze(request: ChatRequest):
     
     return {"sentiment": "Unknown", "score": 0.0, "reasoning": "Could not analyze.", "stats": {"latency_ms": latency_ms, "model": "llama-3.2-11b"}}
 
-@app.post("/resume")
-async def ask_resume(request: ChatRequest):
+@app.post("/sladocs")
+async def ask_sladocs(request: ChatRequest):
     """RAG endpoint to ask questions about the SLA document."""
     start_time = time.time()
     
