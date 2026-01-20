@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  # PostgreSQL with PGVector
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: pgvector-db
+    environment:
+      POSTGRES_USER: langchain
+      POSTGRES_PASSWORD: langchain
+      POSTGRES_DB: langchain
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U langchain -d langchain" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # FastAPI Backend
+  backend:
+    build: .
+    container_name: fastapi-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://langchain:langchain@postgres:5432/langchain
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION_NAME=${AWS_REGION_NAME:-us-east-1}
+      - BEDROCK_GUARDRAIL_ID=${BEDROCK_GUARDRAIL_ID}
+      - BEDROCK_GUARDRAIL_VERSION=${BEDROCK_GUARDRAIL_VERSION:-1}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Next.js Frontend
+  frontend:
+    build: ./frontend
+    container_name: nextjs-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
