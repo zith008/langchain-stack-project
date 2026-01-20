@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
+import StackIcon from 'tech-stack-icons';
 import {
   Cloud, Send, User, Bot, Sparkles,
   Terminal, Server, Layout, Zap,
@@ -18,16 +20,20 @@ interface Message {
   type?: "chat" | "extract" | "analyze" | "sladocs";
 }
 
-const STACK_ITEMS = [
-  { icon: <Layout className="text-blue-400" />, name: "Next.js 15", desc: "React Framework (App Router)" },
-  { icon: <Zap className="text-yellow-400" />, name: "Tailwind v4", desc: "Modern CSS Styling" },
-  { icon: <Sparkles className="text-purple-400" />, name: "Framer Motion", desc: "Smooth UI Animations" },
-  { icon: <Terminal className="text-cyan-400" />, name: "FastAPI", desc: "Python REST Backend" },
-  { icon: <Server className="text-emerald-400" />, name: "AWS Bedrock", desc: "Llama 3.2 11B (Meta)" },
-  { icon: <Bot className="text-orange-400" />, name: "LangChain", desc: "Agent-based Framework" },
-  { icon: <Database className="text-pink-400" />, name: "PGVector", desc: "Vector Store (PostgreSQL)" },
-  { icon: <Bot className="text-red-400" />, name: "Guardrails", desc: "AWS Content Safety" },
-  { icon: <Zap className="text-green-400" />, name: "CI/CD", desc: "GitHub Actions → EC2" },
+type StackItem =
+  | { iconName: string; name: string; desc: string; isCustom: false }
+  | { customUrl: string; name: string; desc: string; isCustom: true };
+
+const STACK_ITEMS: StackItem[] = [
+  { iconName: "nextjs2", name: "Next.js 15", desc: "React Framework (App Router)", isCustom: false },
+  { iconName: "tailwindcss", name: "Tailwind v4", desc: "Modern CSS Styling", isCustom: false },
+  { iconName: "framer", name: "Framer Motion", desc: "Smooth UI Animations", isCustom: false },
+  { iconName: "python", name: "FastAPI", desc: "Python REST Backend", isCustom: false },
+  { iconName: "aws", name: "AWS Bedrock", desc: "Llama 3.2 11B (Meta)", isCustom: false },
+  { iconName: "langchain", name: "LangChain", desc: "Agent-based Framework", isCustom: false },
+  { iconName: "postgresql", name: "PGVector", desc: "Vector Store (PostgreSQL)", isCustom: false },
+  { iconName: "aws", name: "Guardrails", desc: "AWS Content Safety", isCustom: false },
+  { iconName: "github", name: "CI/CD", desc: "GitHub Actions → EC2", isCustom: false },
 ];
 
 // Backend processing info for each mode
@@ -189,7 +195,18 @@ export default function Home() {
                 transition={{ delay: i * 0.07 }}
                 className="group flex items-center gap-3 p-2.5 hover:bg-white/[0.03] rounded-xl transition-colors duration-200 cursor-default"
               >
-                <div className="p-2 bg-white/5 rounded-lg">{item.icon}</div>
+                <div className="relative w-10 h-10 flex items-center justify-center bg-white/5 rounded-lg overflow-hidden">
+                  {item.isCustom ? (
+                    <Image
+                      src={item.customUrl}
+                      alt={item.name}
+                      fill
+                      className="p-1 object-contain"
+                    />
+                  ) : (
+                    <StackIcon name={item.iconName} variant="dark" className="w-8 h-8" />
+                  )}
+                </div>
                 <div>
                   <div className="text-sm font-medium text-white/90">{item.name}</div>
                   <div className="text-[10px] text-white/30">{item.desc}</div>
