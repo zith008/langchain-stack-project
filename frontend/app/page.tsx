@@ -25,6 +25,7 @@ const STACK_ITEMS = [
   { icon: <Bot className="text-orange-400" />, name: "LangChain", desc: "Agent-based Framework" },
   { icon: <Database className="text-pink-400" />, name: "PGVector", desc: "Vector Store (PostgreSQL)" },
   { icon: <Bot className="text-red-400" />, name: "Guardrails", desc: "AWS Content Safety" },
+  { icon: <Zap className="text-green-400" />, name: "CI/CD", desc: "GitHub Actions → EC2" },
 ];
 
 export default function Home() {
