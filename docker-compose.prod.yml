@@ -43,7 +43,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend:8000
+      # Set PUBLIC_API_URL in .env to your EC2 public IP, e.g., http://23.23.58.112:8000
+      - NEXT_PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8000}
     depends_on:
       - backend
     restart: unless-stopped

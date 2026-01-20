@@ -56,7 +56,8 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const endpoint = `http://127.0.0.1:8000/${mode}`;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+      const endpoint = `${apiUrl}/${mode}`;
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
