@@ -127,3 +127,4 @@ MIT License - feel free to use for your own projects!
 ---
 
 Built with ❤️ showcasing enterprise AI architecture
+# Auto-deployed via GitHub Actions
